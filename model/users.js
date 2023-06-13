@@ -29,4 +29,90 @@ const usersSeeder = (req, res) => {
     res.sendStatus(200);
 }
 
-module.exports = {usersSeeder};
+const getUsers = (req, res) => {
+    database.query(
+        'SELECT * FROM user',
+        (e, results, fields) => {
+            if(e){
+                res.sendStatus(500);
+                throw e;
+            }
+            res.status(200).json(results);
+        }
+    )
+}
+
+const getUserByID = (req, res) => {
+    const id = req.params.id;
+
+    database.query(
+        'SELECT * FROM user WHERE id='+id,
+        (e, results, fields) => {
+            if(e){
+                res.sendStatus(500);
+                throw e;
+            }
+            res.status(200).json(results);
+        }
+    )
+}
+
+const createUser = (req, res) => {
+    const {first_name,last_name,email,created_at,is_admin} = req.body;
+
+    database.query(
+        'INSERT INTO user(first_name,last_name,email,created_at,is_admin) VALUES (?,?,?,?,?)',
+        [first_name,last_name,email,created_at,is_admin],
+        (e, results, fields) => {
+            if(e){
+                res.sendStatus(500);
+                throw e;
+            }
+            else
+                res.sendStatus(200);
+        } 
+    )
+}
+
+const updateUser = (req, res) => {
+    const id = req.params.id;
+    const {first_name,last_name,email,updated_at,is_admin} = req.body;
+
+    database.query(
+        'UPDATE user SET first_name=?, last_name=?, email=?, updated_at=?, is_admin=? WHERE id='+id,
+        [first_name,last_name,email,updated_at,is_admin],
+        (e, results, fields) => {
+            if(e){
+                res.sendStatus(500);
+                throw e;
+            }
+            else
+                res.sendStatus(200);
+        } 
+    )
+}
+
+const deleteUser = (req, res) => {
+    const id = req.params.id;
+
+    database.query(
+        'DELETE FROM user WHERE id='+id,
+        (e, results, fields) => {
+            if(e){
+                res.sendStatus(500);
+                throw e;
+            }
+            else
+                res.sendStatus(200);
+        } 
+    )
+}
+
+module.exports = {
+    usersSeeder,
+    getUsers,
+    getUserByID,
+    createUser,
+    updateUser,
+    deleteUser
+};
